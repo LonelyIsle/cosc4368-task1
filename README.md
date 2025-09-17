@@ -5,7 +5,7 @@
 **Assignment:** Task 1 - Randomized Hill Climbing (RHCR2)
 
 ## Description
-This project implements a Python script for Task 1 of the COSC 4368 AI assignment. The script demonstrates the Randomized Hill Climbing algorithm, specifically the RHCR2 variant, for solving a combinatorial optimization problem. A new command-line option `--seed` has been added to allow easy specification of the random seed at runtime, helping graders reproduce runs consistently.
+This project implements a Python script for Task 1 of the COSC 4368 AI assignment. The script demonstrates the Randomized Hill Climbing algorithm, specifically the RHCR2 variant, for solving a combinatorial optimization problem. New command-line options `--seed` and `--auto-seed` have been added: `--seed` allows specifying a fixed random seed for reproducibility, while `--auto-seed` provides fresh randomness on each run, enabling graders to observe different outcomes easily.
 
 ## How to Run
 Make sure you are in the directory containing `task1.py`.  
@@ -17,6 +17,10 @@ To override the random seed used for the runs, use the `--seed` option:
 ```
 python task1.py --seed 12345
 ```
+To run with a fresh random seed each time, use the `--auto-seed` option:
+```
+python task1.py --auto-seed
+```
 
 ## Output Explanation
 After running, the script will output a table with results for each experiment. The columns are:
@@ -25,6 +29,8 @@ After running, the script will output a table with results for each experiment. 
 - **N1 / N2 / N3**: The number of function evaluations (or steps) used in each run.
 - **Total Calls**: The total number of function calls across all runs.
 - **Seed**: The random seed used for reproducibility.
+
+Each table corresponds to a specific `(p,z)` parameter combination and uses its own base seed. Each row in the table uses a different derived seed to ensure independent runs. Within each row, the three solutions (Sol1, Sol2, Sol3) each receive slightly offset seeds to guarantee independent randomness among them.
 
 You can copy-paste the table output directly into Google Docs or Google Sheets for inclusion in your assignment report.
 
@@ -39,4 +45,4 @@ You can adjust the following parameters by editing the top of `task1.py`:
 - `z`: Number of iterations or another algorithm-specific parameter.
 - `seed`: Random seed for reproducibility.
 
-Alternatively, you can now pass the seed at runtime using the `--seed` command-line flag. The script uses this base seed and applies an internal formula to generate different seeds for each run, ensuring reproducibility and variation across runs. This feature facilitates graders in reproducing and verifying the results easily.
+Alternatively, you can pass the seed at runtime using the `--seed` or `--auto-seed` command-line flags. The `--seed` option ensures reproducibility by using a fixed base seed and deriving distinct seeds for each run and stage. The `--auto-seed` option provides different random seeds each time the script is run, enabling fresh randomness and varied results. This seeding system facilitates graders in reproducing and verifying the results easily or exploring different outcomes.

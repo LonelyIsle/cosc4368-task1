@@ -4,6 +4,8 @@ import random
 from dataclasses import dataclass
 from typing import Tuple, Dict, List
 import argparse
+import time
+import secrets
 
 Bounds = Tuple[float, float]
 def f(x: float, y: float) -> float:
@@ -58,6 +60,13 @@ def RHC(
                         solutions_generated=solutions_generated,
                         f_calls=f_calls)
 
+def derive_table_seed(seed_base: int, p: int, z: float) -> int:
+    # Derive a per-table seed deterministically from base, p, z.
+    # Use a simple hash mix; keep it in 31-bit range for compatibility.
+    z_int = int(round(z * 1_000_000))
+    h = (seed_base * 1_000_003) ^ ((p * 2_654_435_761) & 0x7FFFFFFF) ^ ((z_int * 97_531) & 0x7FFFFFFF)
+    return h & 0x7FFFFFFF
+
 @dataclass
 class RHCR2Result:
     sol1_xy: Tuple[float, float]
@@ -82,8 +91,8 @@ def RHCR2(
     bounds: Tuple[Bounds, Bounds] = ((-6.0, 6.0), (-6.0, 6.0)),
 ) -> RHCR2Result:
     run1 = RHC(sp, z, p, seed, bounds)
-    run2 = RHC(run1.best_xy, z/20.0, p, seed, bounds)
-    run3 = RHC(run2.best_xy, z/400.0, p, seed, bounds)
+    run2 = RHC(run1.best_xy, z/20.0, p, seed + 1, bounds)
+    run3 = RHC(run2.best_xy, z/400.0, p, seed + 2, bounds)
 
     return RHCR2Result(
         sol1_xy=run1.best_xy, sol2_xy=run2.best_xy, sol3_xy=run3.best_xy,
@@ -105,15 +114,23 @@ def run_bonus_33rd(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run RHCR2 randomized hill climbing experiments.")
     parser.add_argument("--seed", type=int, help="Override base random seed (default 4368)")
+    parser.add_argument("--auto-seed", action="store_true", help="Pick a fresh random base seed each run (ignored if --seed is provided)")
     args = parser.parse_args()
     start_points = [(2.9, 3.2), (-2.5,+3.2), (4.2,-2), (-5,-5)]
     p_values = [30, 180]
     z_values = [0.05, 0.25]
-    seed_base = args.seed if args.seed is not None else 4368
+    if args.seed is not None:
+        seed_base = args.seed
+    elif args.auto_seed:
+        seed_base = secrets.randbits(31)
+    else:
+        seed_base = 4368
+    print(f"Base seed: {seed_base}")
 
     def print_table_for(p, z, start_points, seed_base):
         title = f"Results for p={p}, z={z:.2f}"
         print("\n" + title)
+        print(f"(table base seed: {derive_table_seed(seed_base, p, z)})")
         print("=" * len(title))
         header = (
             f"{'Start Point':>12} | {'Sol1':>20} | {'f(Sol1)':>10} | "
@@ -122,10 +139,12 @@ if __name__ == "__main__":
         )
         print(header)
         print("-" * len(header))
+        table_seed_base = derive_table_seed(seed_base, p, z)
+        table_rng = random.Random(table_seed_base)
         totals = []
         best_vals = []  
         for i, sp in enumerate(start_points):
-            seed = seed_base + (p * 1000) + int(z * 1000) + i
+            seed = table_rng.randrange(1000)  # limit to 0–999
             result = RHCR2(sp=sp, z=z, p=p, seed=seed)
             n_solutions_str = f"{result.n_solutions_1}/{result.n_solutions_2}/{result.n_solutions_3}"
             print(
