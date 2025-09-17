@@ -7,6 +7,11 @@
 ## Description
 This project implements a Python script for Task 1 of the COSC 4368 AI assignment. The script demonstrates the Randomized Hill Climbing algorithm, specifically the RHCR2 variant, for solving a combinatorial optimization problem. New command-line options `--seed` and `--auto-seed` have been added: `--seed` allows specifying a fixed random seed for reproducibility, while `--auto-seed` provides fresh randomness on each run, enabling graders to observe different outcomes easily.
 
+## Files
+- `task1.py` → main implementation.
+- `README.md` → program instructions (this file).
+- `Task1_Report.pdf` → writeup with tables and analysis.
+
 ## How to Run
 Make sure you are in the directory containing `task1.py`.  
 To execute the script, run:
@@ -38,7 +43,7 @@ Each table corresponds to a specific `(p,z)` parameter combination and uses its 
 
 ## Customizing Parameters
 You can adjust the following parameters by editing the top of `task1.py`:
-- `sp`: Starting point or initial solution.
+- `sp`: Starting points (set of initial solutions to test).
 - `p`: Probability parameter for the algorithm.
 - `z`: Number of iterations or another algorithm-specific parameter.
 - `seed`: Random seed for reproducibility.
