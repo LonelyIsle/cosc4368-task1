@@ -32,8 +32,6 @@ After running, the script will output a table with results for each experiment. 
 
 Each table corresponds to a specific `(p,z)` parameter combination and uses its own base seed. Each row in the table uses a different derived seed to ensure independent runs. Within each row, the three solutions (Sol1, Sol2, Sol3) each receive slightly offset seeds to guarantee independent randomness among them.
 
-You can copy-paste the table output directly into Google Docs or Google Sheets for inclusion in your assignment report.
-
 ## Dependencies
 - Requires **Python 3**.
 - No external packages are needed; the script uses only standard Python libraries.
