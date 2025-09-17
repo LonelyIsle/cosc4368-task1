@@ -61,8 +61,6 @@ def RHC(
                         f_calls=f_calls)
 
 def derive_table_seed(seed_base: int, p: int, z: float) -> int:
-    # Derive a per-table seed deterministically from base, p, z.
-    # Use a simple hash mix; keep it in 31-bit range for compatibility.
     z_int = int(round(z * 1_000_000))
     h = (seed_base * 1_000_003) ^ ((p * 2_654_435_761) & 0x7FFFFFFF) ^ ((z_int * 97_531) & 0x7FFFFFFF)
     return h & 0x7FFFFFFF
@@ -144,7 +142,7 @@ if __name__ == "__main__":
         totals = []
         best_vals = []  
         for i, sp in enumerate(start_points):
-            seed = table_rng.randrange(1000)  # limit to 0–999
+            seed = table_rng.randrange(1000)
             result = RHCR2(sp=sp, z=z, p=p, seed=seed)
             n_solutions_str = f"{result.n_solutions_1}/{result.n_solutions_2}/{result.n_solutions_3}"
             print(
@@ -161,7 +159,7 @@ if __name__ == "__main__":
     for p in p_values:
         for z in z_values:
             print_table_for(p, z, start_points, seed_base)
-    print("\n33rd Run (Bonus)")
+    print("\n33rd Run")
     print("================")
     header = (
         f"{'Start Point':>12} | {'Sol1':>20} | {'f(Sol1)':>10} | "
